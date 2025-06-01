@@ -1,0 +1,60 @@
+@startuml name Criar novo fiado
+title "Criar novo fiado"
+
+actor Cliente as "Cliente"
+actor Fiador as "Fiador" 
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+== 1. Solicita Fiado ==
+Cliente -> Fiador : Solicita um fiado
+
+== 2. Criação do Fiado ==
+Fiador -> Frontend : Clica em "Novo Fiado" no dashboard
+Frontend --> Fiador : Exibe formulário de criação
+
+note right of Frontend
+  Formulário contém:
+  - Seletor de cliente (obrigatório)
+  - Campo valor (obrigatório) 
+  - Campo descrição (obrigatório)
+  - Campo data (padrão: hoje)
+end note
+
+Fiador -> Frontend : Preenche dados e clica em "Salvar Fiado"
+
+== 3. Validação e Persistência ==
+Frontend -> Frontend : Valida campos obrigatórios
+alt Validação OK
+    Frontend -> API : POST /fiados (clienteId, valor, descrição, data)
+    API -> DB : Salva novo fiado
+    API -> DB : Atualiza total em aberto do cliente
+    
+    alt Sucesso na criação
+        DB --> API : Fiado criado
+        API --> Frontend : 201 Created + dados do fiado
+        Frontend --> Fiador : Toast "Fiado adicionado com sucesso"
+        Frontend -> Frontend : Redireciona para detalhes do cliente
+    else Erro no servidor
+        API --> Frontend : 500 Server Error
+        Frontend --> Fiador : Toast "Erro interno, tente novamente"
+    end
+    
+else Validação falhou
+    Frontend --> Fiador : Exibe erros nos campos
+    note right of Frontend
+      Possíveis erros:
+      - "Selecione um cliente"
+      - "Valor deve ser maior que R$ 0,00"  
+      - "Descrição é obrigatória"
+      - "Data não pode ser futura"
+    end note
+end
+
+== 4. Atualização do Dashboard ==
+Frontend -> API : GET /dashboard (atualiza totais)
+API --> Frontend : Novos dados do dashboard
+Frontend --> Fiador : Dashboard atualizado com novo total
+
+@enduml

@@ -1,0 +1,56 @@
+@startuml name "Diagrama de caso de uso - Escambo"
+title "Diagrama de caso de uso - Escambo"
+left to right direction
+skinparam packageStyle rectangle
+
+actor Usuario as "Usuário (dono)"
+
+
+rectangle "Clientes" {
+
+(Visualizar cliente)
+(Registrar cliente)
+(Editar cliente)
+(Desativar cliente)
+(Buscar clientes)
+}
+
+rectangle "Fiado" {
+(Visualizar dashboard)
+(Criar fiado)
+(Visualizar detalhes do fiado)
+
+}
+
+rectangle "Informações" {
+(Visualizar dashboard)
+(Visualizar relatórios)
+(Consultar histórico)
+}
+
+rectangle "Pagamentos" {
+(Registrar pagamento)
+
+}
+
+
+
+
+Usuario -- (Visualizar dashboard)
+
+Usuario -- (Visualizar cliente)
+Usuario -- (Registrar cliente)
+Usuario -- (Editar cliente)
+Usuario -- (Desativar cliente)
+Usuario -- (Buscar clientes)
+
+Usuario -- (Criar fiado)
+Usuario -- (Visualizar detalhes do fiado)
+
+Usuario -- (Registrar pagamento)
+
+Usuario -- (Visualizar relatórios)
+Usuario -- (Consultar histórico)
+
+
+@enduml
