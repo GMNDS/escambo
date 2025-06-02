@@ -1,0 +1,60 @@
+@startuml "Adicionar um pagamento"
+title "Adicionar um pagamento"
+actor cliente as "Cliente"
+actor usuario as "Usuário(dono)"
+participant frontend as "FrontEnd"
+participant API as "API"
+database DB as "Database"
+
+== 1. Solicita Pagar ==
+cliente -> usuario : Solicita pagar
+
+== 2. Preenchimento do formulário ==
+usuario -> frontend : Abre dashboard
+usuario -> frontend : Clica em 'Adicionar Pagamento'
+frontend --> usuario : Exibe formulario de pagamento
+note right of frontend
+    Formulário contém:
+    - Seletor de Cliente (obrigatório)
+    - Seletor de Fiado (obrigatório)
+    - Campo Valor (obrigatório)
+    - Campo Descrição (opcional)
+    - Data(automaticamente inserida no backend, no momento do pagamento)
+end note
+usuario -> frontend :  Preenche formulario e clica "Pagar"
+frontend -> API : Envia dados de pagamento
+
+== 3. Validação dos campos ==
+API -> DB : Busca fiado e soma pagamentos existentes
+DB --> API : Retorna valor total da dívida e valor já pago
+API -> API : Calcula: valor_restante = valor_total - valor_pago
+API -> API : Verifica se novo_pagamento <= valor_restante
+
+alt Novo pagamento excede valor restante
+    API -> frontend : Retorna erro "Valor excede saldo devedor"
+    frontend --> usuario : Exibe erro
+else Novo pagamento é válido
+    API -> DB : Registra novo pagamento
+    DB --> API : Confirmação do registro
+    
+    alt Valor restante após pagamento = 0
+        API -> DB : Atualiza status do fiado para PAID
+        DB --> API : Confirmação de atualização
+        API -> frontend : Retorna sucesso (fiado quitado)
+    else Valor restante após pagamento > 0
+        API -> DB : Atualiza status do fiado para PARTIAL
+        DB --> API : Confirmação de atualização
+        API -> frontend : Retorna sucesso (pagamento parcial)
+    end
+    
+    frontend --> usuario : Exibe mensagem de sucesso
+end
+
+note right of frontend
+    Mensagens possíveis:
+    - "Pagamento registrado! Fiado quitado."
+    - "Pagamento registrado! Restam R$ X,XX"
+    - "Valor excede o saldo devedor em R$ X,XX"
+end note
+
+@enduml
