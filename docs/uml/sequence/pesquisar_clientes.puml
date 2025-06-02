@@ -1,0 +1,57 @@
+@startuml name Pesquisa de clientes
+title "Pesquisa de clientes"
+
+actor Usuário as "Usuário"
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+== 1. Selecionar lista de clientes ==
+Usuário -> Frontend : Logar no sistema
+Frontend -> Usuário : Mostrar opções do sistema
+Usuário -> Frontend : Clicar em "Clientes"
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Solicitar lista de clientes
+API -> Database : Consultar Clientes
+alt Nenhum cliente cadastrado
+Database -> API : Informar que não há clientes cadastrados 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Gerar mensagem "Nenhum cliente cadastrado"
+else Há clientes cadastrados
+Database -> API : Enviar Lista de Clientes
+API -> Frontend : Repassar lista de clientes
+Frontend -> Usuário : Mostrar lista de clientes
+end
+
+
+
+
+== 2. Pesquisar clientes ==
+Usuário -> Frontend : Pesquisar por cliente
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Encaminhar critérios de pesquisa
+API -> Database : Buscar por dados com base nos critérios
+alt Dados não encontrados
+Database -> API : Informar que não foram encontrados dados compatíveis 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Gerar mensagem "Nenhum cliente encontrado"
+else Dados encontrados
+Database -> API : Enviar dados encontrados 
+API -> Frontend : Repassar dados encontrados
+Frontend -> Usuário : Mostrar clientes encontrados
+end
+
+
+== 3. Visualizar detalhes ==
+Usuário -> Frontend : Clicar no cliente para consulta
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Encaminhar solicitação de dados
+API -> Database : Buscar por dados do cliente 
+Database -> API : Enviar dados encontrados 
+API -> Frontend : Repassar dados encontrados
+Frontend -> Usuário : Mostrar dados do cliente
+
+
+
+
+@enduml
