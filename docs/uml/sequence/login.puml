@@ -1,0 +1,36 @@
+@startuml name Login de Usuário
+title "Login de usuário"
+
+actor Usuário as "Usuário"
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+== 1. Inserir dados ==
+Usuário -> Frontend : Inicia o sistema
+Frontend -> Usuário : Solicita Usuário e Senha
+Usuário -> Frontend : Envia informações ao sistema
+Frontend -> Frontend : Valida campos obrigatórios
+alt Campos incompletos
+    Frontend -> Usuário : Envia mensagem "preencha todos os campos obrigatórios"
+end
+
+
+
+== 2. Confirmação de dados ==
+Frontend -> API : Enviar dados colocados pelo usuário
+API -> DB : Consultar usuário e senha
+DB -> API : Enviar dados solicitados
+API -> API : Confirmar credenciais
+alt Dados Incorretos
+API -> Frontend : Enviar mensagem "Dados incorretos"
+Frontend -> Usuário : Enviar mensagem "Dados incorretos, digite novamente"
+else Dados corretos
+API -> Frontend : Dados Corretos: Confirma autenticação
+Frontend -> Usuário : Permitir acesso ao sistema
+    
+end
+
+
+
+@enduml
