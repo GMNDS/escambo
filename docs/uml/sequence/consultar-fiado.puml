@@ -1,0 +1,36 @@
+@startuml name Consultar fiado
+title "Consultar fiado"
+
+actor Fiador as "Fiador" 
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+== 1. Visualizar o Cliente ==
+Fiador -> Frontend : Na tela inicial, clica em "Ver clientes"
+Frontend --> Fiador : Exibe Clientes
+
+note right of Frontend
+  Tela Clientes têm:
+  - Botão de Voltar
+  - Botão de Adicionar Cliente
+  - Buscador de clientes
+  - Total de clientes cadastrados 
+  - Total de dinheiro devido pelos clientes
+  - Clientes visíveis em cascata
+end note
+
+Fiador -> Frontend : Seleciona o Cliente da Consulta
+
+== 2. Consultar Fiado ==
+Frontend --> Fiador : Exibe tela de informações do Cliente
+
+note right of Frontend
+    Tela da Consulta do Cliente:
+        - Total da dívida
+        - Botão de Adicionar Fiado
+        - Botão de Registrar o Pagamento do Fiado
+        - Uma sessão de Dívidas em Abertos
+end note
+
+Fiador -> Fiador : Analisa as informações do cliente
