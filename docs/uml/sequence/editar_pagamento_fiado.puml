@@ -1,0 +1,62 @@
+@startuml "Editar Pagamento do Fiado"
+title "Editar pagamento"
+
+actor Usuário as "Usuário" 
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+== 1. Visualizar o Pagamentos ==
+Usuário -> Frontend : Logar no sistema
+Frontend -> Usuário : Mostrar opções do sistema
+Usuário -> Frontend : Selecionar "Pagamentos"
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Solicitar lista de pagamentos
+API -> Database : Consultar Pagamentos
+alt Nenhum pagamento cadastrado
+Database -> API : Informar que não há pagamentos cadastrados 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Gerar mensagem "Nenhum pagamento cadastrado"
+else Há pagamentos cadastrados
+Database -> API : Enviar Lista de pagamentos
+API -> Frontend : Repassar lista de pagamentos
+Frontend -> Usuário : Mostrar lista de pagamentos
+opt Usuário não deseja pesquisar pagamento
+    Frontend -> Usuário : Permitir seleção direta na lista
+end
+
+Usuário -> Frontend : Seleciona o pagamento da Consulta
+
+== 2. Consultar pagamento ==
+Usuário -> Frontend : Pesquisar por pagamento 
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Encaminhar critérios de pesquisa
+API -> Database : Buscar por dados com base nos critérios
+alt Dados não encontrados
+Database -> API : Informar que não foram encontrados dados compatíveis 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Exibir mensagem "Nenhum pagamento encontrado"
+else Dados encontrados
+Database -> API : Enviar dados encontrados 
+API -> Frontend : Repassar dados encontrados
+Frontend -> Usuário : Mostrar pagamentos encontrados
+
+== 3. Editar Pagamento ==
+Usuário -> Frontend : Clicar no pagamento que deseja editar
+Frontend -> Usuário : Exibir indicador de carregamento
+Frontend -> Usuário : Exibir dados do pagamento
+Usuário -> Frontend : Selecionar a opção "editar pagamento"
+Frontend -> Usuário : Mostrar informações deste pagamento 
+Usuário -> Frontend : Realizar alterações necessárias e enviar
+Frontend -> API : Encaminhar solicitação de edição
+API -> Database : Solicitar a edição do pagamento
+alt edição bem-sucedida
+    Database -> API : Confirmar edição
+    API -> Frontend : Confirmar edição
+    Frontend -> Usuário : Exibir mensagem "pagamento alterado com sucesso"
+else Erro na edição
+    Database -> API : Informar falha na edição
+    API -> Frontend : Repassar erro
+    Frontend -> Usuário : Exibir mensagem "Erro ao editar pagamento"
+end
+
