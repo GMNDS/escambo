@@ -1,0 +1,40 @@
+@startuml name Criar novo cliente
+title "Criar novo cliente"
+
+actor User as "User" 
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+== 1. Criar usuário ==
+User -> Frontend : Logar no sistema
+Frontend -> User : Mostrar opções do sistema
+User -> Frontend : Selecionar "clientes"
+Frontend -> User : Mostrar opções para clientes
+User -> Frontend : Selecionar a opção "Criar um cliente"
+Frontend -> User : Solicitar dados do cliente
+note right of Frontend 
+    Dados necessários:
+    - Nome
+    - Email
+    - CPF
+    - Número de celular
+end note
+User -> Frontend : Fornecer dados do cliente
+Frontend -> Frontend : Valida campos obrigatórios
+alt Dados incompletos
+    Frontend -> User : Exibir mensagem "Preencha todos os campos obrigatórios"
+else Dados válidos
+    Frontend -> API : Encaminhar dados do cliete
+    API -> DB : Criar novo cliente
+    alt Sucesso na criação
+        DB --> API : Cliente criado com sucesso
+        API --> Frontend : Repassar dados do cliente criado
+        Frontend -> User : Exibir mensagem "Cliente criado com sucesso"
+        else Erro na criação
+        API --> Frontend : Informar erro na criação
+        Frontend -> User : Exibir mensagem "Erro ao criar cliente"
+
+end
+@endebnf
+@enduml
