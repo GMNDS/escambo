@@ -1,0 +1,69 @@
+@startuml name excluir_cliente
+title "Excluir Cliente"
+
+actor Usuário as "Usuário"
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+
+== 1. Selecionar lista de clientes ==
+Usuário -> Frontend : Logar no sistema
+Frontend -> Usuário : Mostrar opções do sistema
+Usuário -> Frontend : Selecionar em "Clientes"
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Solicitar lista de clientes
+API -> Database : Consultar Clientes
+alt Nenhum cliente cadastrado
+Database -> API : Informar que não há clientes cadastrados 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Gerar mensagem "Nenhum cliente cadastrado"
+else Há clientes cadastrados
+Database -> API : Enviar Lista de Clientes
+API -> Frontend : Repassar lista de clientes
+Frontend -> Usuário : Mostrar lista de clientes
+opt Usuário não deseja pesquisar cliente
+    Frontend -> Usuário : Permitir seleção direta na lista
+end
+
+
+
+
+
+== 2. Pesquisar cliente que deseja excluir ==
+Usuário -> Frontend : Pesquisar por cliente 
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Encaminhar critérios de pesquisa
+API -> Database : Buscar por dados com base nos critérios
+alt Dados não encontrados
+Database -> API : Informar que não foram encontrados dados compatíveis 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Exibir mensagem "Nenhum cliente encontrado"
+else Dados encontrados
+Database -> API : Enviar dados encontrados 
+API -> Frontend : Repassar dados encontrados
+Frontend -> Usuário : Mostrar clientes encontrados
+
+
+== 3. Excluir cliente ==
+Usuário -> Frontend : Clicar no cliente que deseja excluir
+Frontend -> Usuário : Exibir indicador de carregamento
+Frontend -> Usuário : Exibir dados do cliente
+Usuário -> Frontend : Selecionar a opção "Excluir cliente"
+Frontend -> API : Encaminhar solicitação de exclusão
+API -> Database : Solicitar a exclusão do cliente
+alt Exclusão bem-sucedida
+    Database -> API : Confirmar exclusão
+    API -> Frontend : Confirmar exclusão
+    Frontend -> Usuário : Exibir mensagem "Cliente excluído com sucesso"
+else Erro na exclusão
+    Database -> API : Informar falha na exclusão
+    API -> Frontend : Repassar erro
+    Frontend -> Usuário : Exibir mensagem "Erro ao excluir cliente"
+end
+
+
+
+
+
+@enduml
