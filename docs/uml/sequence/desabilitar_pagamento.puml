@@ -1,0 +1,60 @@
+@startuml "Desabilitar Pagamento do Fiado"
+title "Desabilitar pagamento"
+
+actor Usuário as "Usuário" 
+participant Frontend as "Frontend"
+participant API as "API"
+database DB as "Database"
+
+== 1. Visualizar os Pagamentos ==
+Usuário -> Frontend : Logar no sistema
+Frontend -> Usuário : Mostrar opções do sistema
+Usuário -> Frontend : Selecionar "Pagamentos"
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Solicitar lista de pagamentos
+API -> Database : Consultar Pagamentos
+alt Nenhum pagamento cadastrado
+Database -> API : Informar que não há pagamentos cadastrados 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Gerar mensagem "Nenhum pagamento cadastrado"
+else Há pagamentos cadastrados
+Database -> API : Enviar Lista de pagamentos
+API -> Frontend : Repassar lista de pagamentos
+Frontend -> Usuário : Mostrar lista de pagamentos
+opt Usuário não deseja pesquisar pagamento
+    Frontend -> Usuário : Permitir seleção direta na lista
+end
+
+Usuário -> Frontend : Seleciona o pagamento da Consulta
+
+== 2. Consultar pagamento ==
+Usuário -> Frontend : Pesquisar por pagamento 
+Frontend -> Usuário : Mostrar indicador de carregamento
+Frontend -> API : Encaminhar critérios de pesquisa
+API -> Database : Buscar por dados com base nos critérios
+alt Dados não encontrados
+Database -> API : Informar que não foram encontrados dados compatíveis 
+API -> Frontend : Repassar informação
+Frontend -> Usuário : Exibir mensagem "Nenhum pagamento encontrado"
+else Dados encontrados
+Database -> API : Enviar dados encontrados 
+API -> Frontend : Repassar dados encontrados
+Frontend -> Usuário : Mostrar pagamentos encontrados
+
+== 3. Desabilitar Pagamento ==
+Usuário -> Frontend : Clicar no pagamento que deseja desabilitar
+Frontend -> Usuário : Exibir indicador de carregamento
+Frontend -> Usuário : Exibir dados do pagamento
+Usuário -> Frontend : Selecionar a opção "Desabilitar pagamento"
+Frontend -> API : Encaminhar solicitação de desabilitação
+API -> Database : Solicitar a desabilitação do pagamento
+alt ação bem-sucedida
+    Database -> API : Confirmar ação
+    API -> Frontend : Repassar ação de desabilitação
+    Frontend -> Usuário : Exibir mensagem "Pagamento desabilidado com sucesso"
+else Erro na ação
+    Database -> API : Informar falha no ato de desabilitar
+    API -> Frontend : Repassar erro
+    Frontend -> Usuário : Exibir mensagem "Erro ao desabilitar pagamento"
+end
+
