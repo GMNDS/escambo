@@ -12,7 +12,7 @@ export const users = pgTable("users", {
 
 export const clients = pgTable("clients", {
     id: uuid("id").primaryKey().defaultRandom(),
-    name: varchar("username", {length: 255}).notNull(),
+    name: varchar("name", {length: 255}).notNull(),
     phone_number: varchar("phone_number", {length: 14}).notNull(),
     updated_at: timestamp("updated_at").defaultNow(),
     created_at: timestamp("created_at").defaultNow(),
