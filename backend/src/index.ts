@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import {clientRoutes, userRoutes} from './routes'
+import {clientRoutes, userRoutes, paymentRoutes, tabRoutes} from './routes'
 
 dotenv.config();
 
@@ -13,6 +13,8 @@ app.use(express.json());
 
 app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/tabs', tabRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
