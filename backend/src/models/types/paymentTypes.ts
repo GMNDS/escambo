@@ -1,6 +1,7 @@
 interface BasePaymentData {
     tab_id: string;
     value: string;
+    description?: string;
 }
 
 export interface CreatePaymentData extends BasePaymentData {}
@@ -11,5 +12,5 @@ export interface UpdatePaymentData extends Partial<BasePaymentData> {
 
 export interface PaymentData extends BasePaymentData {
     id?: string;
-    created_at?: Date;
+    created_at?: Date | string;
 }

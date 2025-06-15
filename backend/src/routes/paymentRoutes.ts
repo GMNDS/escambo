@@ -18,6 +18,7 @@ router.get('/test', (req: Request, res: Response) => {
 });
 
 router.get('/', asyncHandler(paymentController.getAll.bind(paymentController)));
+router.get('/tab/:tab_id', asyncHandler(paymentController.getByTabId.bind(paymentController)));
 router.post('/', asyncHandler(paymentController.create.bind(paymentController)));
 router.put('/:id', asyncHandler(paymentController.update.bind(paymentController)));
 router.delete('/:id', asyncHandler(paymentController.delete.bind(paymentController)));

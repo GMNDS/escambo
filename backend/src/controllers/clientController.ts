@@ -6,14 +6,14 @@ export class ClientController {
         try {
             const clients = await ClientModel.findAll();
             res.status(200).json({
-                sucess: true,
+                success: true,
                 data: clients,
                 count: clients.length
             });
         }  catch (error) {
             console.error('Error fetching clients:', error);
             res.status(500).json({
-                sucess: false,
+                success: false,
                 message: 'Failed to fetch clients'
             });
 

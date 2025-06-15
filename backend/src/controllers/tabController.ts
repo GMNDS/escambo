@@ -22,11 +22,11 @@ export class TabController {
 
     async create(req: Request, res: Response) {
         try {
-            const { client_id, description, value, status, created_by } = req.body;
-            if (!client_id || !description || !value || !status || !created_by) {
+            const { client_id, description, value, created_by } = req.body;
+            if (!client_id || !description || !value || !created_by) {
                 return res.status(400).json({ success: false, message: 'All fields are required' });
             }
-            const tab = new TabModel({ client_id, description, value, status, created_by });
+            const tab = new TabModel({ client_id, description, value, created_by });
             const created = await tab.create();
             res.status(201).json({ success: true, data: created });
         } catch (error) {

@@ -10,7 +10,8 @@ import type {
 export class PaymentModel {
     public id?: string;
     public tab_id: string;
-    public value: string; // <-- string
+    public value: string;
+    public description?: string;
     public created_at?: string;
 
     constructor(data: CreatePaymentData | PaymentData) {
@@ -28,6 +29,7 @@ export class PaymentModel {
         }
         this.tab_id = data.tab_id;
         this.value = data.value;
+        this.description = data.description;
     }
 
     async create(): Promise<PaymentData> {
@@ -36,7 +38,8 @@ export class PaymentModel {
                 .insert(payments)
                 .values({
                     tab_id: this.tab_id,
-                    value: this.value, // string
+                    value: this.value,
+                    description: this.description,
                 })
                 .returning();
 
@@ -63,10 +66,10 @@ export class PaymentModel {
             if (!result) {
                 return null;
             }
-            // Converta campos nulos para string vazia ou trate conforme necessário
             return {
                 ...result,
-                value: result.value ?? "0"
+                value: result.value ?? "0",
+                description: result.description ?? undefined
             } as PaymentData;
         } catch (error) {
             console.error("Error finding payment by ID:", error);
@@ -79,7 +82,8 @@ export class PaymentModel {
             const results = await db.select().from(payments);
             return results.map(result => ({
                 ...result,
-                value: result.value ?? "0"
+                value: result.value ?? "0",
+                description: result.description ?? undefined
             })) as PaymentData[];
         } catch (error) {
             console.error("Error finding payments", error);
@@ -92,9 +96,10 @@ export class PaymentModel {
             if (!this.id) {
                 throw new Error("Payment ID is required for update");
             }
-            const updateData: Partial<{ tab_id: string; value: string }> = {};
+            const updateData: Partial<{ tab_id: string; value: string; description: string }> = {};
             if (data.tab_id) updateData.tab_id = data.tab_id;
             if (typeof data.value === "string") updateData.value = data.value;
+            if (data.description !== undefined) updateData.description = data.description;
 
             const [result] = await db
                 .update(payments)
@@ -105,6 +110,7 @@ export class PaymentModel {
             if (result) {
                 this.tab_id = result.tab_id ?? "";
                 this.value = result.value ?? "0";
+                this.description = result.description ?? undefined;
                 this.created_at = result?.created_at?.toISOString?.();
             }
             return this as PaymentData;
@@ -124,6 +130,37 @@ export class PaymentModel {
         } catch (error) {
             console.error("Error deleting payment:", error);
             throw new Error("Failed to delete payment");
+        }
+    }
+
+    static async findByTabId(tabId: string): Promise<PaymentData[]> {
+        try {
+            if (!tabId || typeof tabId !== "string") {
+                throw new Error("Valid tab ID is required");
+            }
+            const results = await db
+                .select()
+                .from(payments)
+                .where(eq(payments.tab_id, tabId));
+                
+            return results.map(result => ({
+                ...result,
+                value: result.value ?? "0",
+                description: result.description ?? undefined
+            })) as PaymentData[];
+        } catch (error) {
+            console.error("Error finding payments by tab ID:", error);
+            throw new Error("Failed to find payments by tab ID");
+        }
+    }
+
+    static async getTotalPaidByTabId(tabId: string): Promise<number> {
+        try {
+            const payments = await this.findByTabId(tabId);
+            return payments.reduce((total, payment) => total + Number(payment.value), 0);
+        } catch (error) {
+            console.error("Error calculating total paid:", error);
+            throw new Error("Failed to calculate total paid amount");
         }
     }
 }

@@ -12,7 +12,7 @@ export class TabModel {
     public client_id: string | null;
     public description: string;
     public value: string;
-    public status: "unpaid" | "paid" | "partial";
+    public status?: "unpaid" | "paid" | "partial";
     public created_by: string | null;
     public created_at?: string;
     public updated_at?: string;
@@ -23,9 +23,6 @@ export class TabModel {
         }
         if (!data.value || isNaN(Number(data.value))) {
             throw new Error("Valid value is required");
-        }
-        if (!data.status) {
-            throw new Error("Status is required");
         }
 
         if ("id" in data) {
@@ -41,7 +38,6 @@ export class TabModel {
         this.client_id = data.client_id ?? null;
         this.description = data.description.substring(0, 255);
         this.value = data.value;
-        this.status = data.status as "unpaid" | "paid" | "partial";
         this.created_by = data.created_by ?? null;
     }
 
@@ -158,6 +154,36 @@ export class TabModel {
         } catch (error) {
             console.error("Error deleting tab:", error);
             throw new Error("Failed to delete tab");
+        }
+    }
+
+    static async updateStatus(id: string, status: "unpaid" | "paid" | "partial"): Promise<TabData | null> {
+        try {
+            if (!id) {
+                throw new Error("Tab ID is required");
+            }
+            if (!["unpaid", "paid", "partial"].includes(status)) {
+                throw new Error("Valid status is required");
+            }
+
+            const [result] = await db
+                .update(tabs)
+                .set({ status })
+                .where(eq(tabs.id, id))
+                .returning();
+
+            if (!result) {
+                return null;
+            }
+
+            return {
+                ...result,
+                value: result.value ?? "0",
+                description: result.description ?? ""
+            } as TabData;
+        } catch (error) {
+            console.error("Error updating tab status:", error);
+            throw new Error("Failed to update tab status");
         }
     }
 }

@@ -33,5 +33,6 @@ export const payments = pgTable("payments", {
     id: uuid("id").primaryKey().defaultRandom(),
     tab_id: uuid("tab_id").references(() => tabs.id, {onDelete: "cascade"}),
     value: decimal("value", {precision: 10, scale: 2}),
+    description: text("description"),
     created_at: timestamp("created_at").defaultNow(),  
 })
