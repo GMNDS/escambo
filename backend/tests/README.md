@@ -1,6 +1,70 @@
-# Testes do ClientModel com Poku
+# Testes do Sistema Escambo Backend
 
-## Estrutura dos Testes
+## Estrutura Completa de Testes
+
+O sistema possui uma estrutura abrangente de testes dividida em duas categorias principais:
+
+### 🧪 Testes Unitários
+
+Localizados em `/tests/`:
+- ✅ **clientBehavior.test.mjs** - Testes de comportamento e regras de negócio
+- ✅ **clientModel.test.mjs** - Testes unitários com mock da classe ClientModel
+- ✅ **clientValidation.test.mjs** - Testes de validação de dados e limites
+
+### 🔧 Testes de Integração
+
+Localizados em `/tests/integration/`:
+- ✅ **setup.mjs** - Configuração e utilities para testes
+- ✅ **clientModel.integration.test.mjs** - Testes de integração do modelo Cliente
+- ✅ **clientAPI.integration.test.mjs** - Testes de integração da API de Clientes
+- ✅ **system.integration.test.mjs** - Testes do sistema completo
+- ✅ **fullAPI.integration.test.mjs** - Testes completos da API
+- ✅ **run-integration-tests.mjs** - Script executor de todos os testes
+- ✅ **README.md** - Documentação completa dos testes de integração
+
+## Como Executar
+
+### 🏃‍♂️ Comandos Disponíveis
+
+```bash
+# Testes unitários apenas
+npm run test:unit
+
+# Testes de integração apenas  
+npm run test:integration
+
+# Testes de integração - apenas modelos
+npm run test:integration:models
+
+# Testes de integração - apenas API
+npm run test:integration:api
+
+# Todos os testes (unitários + integração)
+npm run test:all
+
+# Testes originais (compatibilidade)
+npm test
+
+# Modo watch para desenvolvimento
+npm run test:watch
+```
+
+### 📋 Pré-requisitos para Testes de Integração
+
+1. **Banco de Dados Configurado:**
+   ```bash
+   # Arquivo .env deve conter:
+   DATABASE_URL=postgresql://user:password@localhost:5432/escambo_test
+   ```
+
+2. **Schema Atualizado:**
+   ```bash
+   npm run build
+   ```
+
+## Cobertura de Testes
+
+### 🎯 Testes Unitários (Mock-based)
 
 ### `clientModel.test.mjs`
 Testes unitários com mock da classe `ClientModel`:
