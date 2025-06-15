@@ -21,6 +21,11 @@ const testSuites = [
         description: 'Endpoints REST, fluxos via HTTP, cenários reais'
     },
     {
+        name: 'Testes de API de Pagamentos',
+        file: 'tests/integration/paymentAPI.integration.test.mjs',
+        description: 'API de pagamentos, lógica de negócio, validações de fiado'
+    },
+    {
         name: 'Testes de Validação e Edge Cases',
         file: 'tests/integration/validationIntegration.poku.test.mjs',
         description: 'Validações, normalização, limites, edge cases'

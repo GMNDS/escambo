@@ -88,7 +88,7 @@ test('GET /api/clients - Listar todos os clientes', async () => {
     const emptyResponse = await makeRequest('GET', '/api/clients');
     
     assert.strictEqual(emptyResponse.status, 200, 'Status deve ser 200');
-    assert.strictEqual(emptyResponse.data.sucess, true, 'Resposta deve indicar sucesso');
+    assert.strictEqual(emptyResponse.data.success, true, 'Resposta deve indicar sucesso');
     assert.ok(Array.isArray(emptyResponse.data.data), 'Data deve ser array');
     assert.strictEqual(emptyResponse.data.count, 0, 'Count deve ser 0');
     console.log('✅ Lista vazia retornada corretamente');
@@ -109,7 +109,7 @@ test('GET /api/clients - Listar todos os clientes', async () => {
     const response = await makeRequest('GET', '/api/clients');
     
     assert.strictEqual(response.status, 200, 'Status deve ser 200');
-    assert.strictEqual(response.data.sucess, true, 'Resposta deve indicar sucesso');
+    assert.strictEqual(response.data.success, true, 'Resposta deve indicar sucesso');
     assert.ok(Array.isArray(response.data.data), 'Data deve ser array');
     assert.strictEqual(response.data.count, 2, 'Count deve ser 2');
     
