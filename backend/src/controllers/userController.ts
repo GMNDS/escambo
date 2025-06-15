@@ -1,6 +1,8 @@
 import type {Request, Response} from 'express';
 import {UserModel} from '../models';
-import type {CreateUserData, UserData, UpdateUserData} from '../models/types/userTypes'
+import type {CreateUserData, UserData, UpdateUserData} from '../models/types/userTypes';
+import bcrypt from 'bcrypt';
+
 export class UserController {
     async getAll(req: Request, res: Response) {
         try {
@@ -87,5 +89,13 @@ export class UserController {
             console.error('Error deleting user:', error);
             res.status(500).json({ success: false, message: 'Failed to delete user' });
         }
+    }
+
+    async login(username: string, password: string) {
+        const user = await UserModel.findByUsername(username);
+        if (!user) return null;
+        const valid = await bcrypt.compare(password, user.password);
+        if (!valid) return null;
+        return user;
     }
 }

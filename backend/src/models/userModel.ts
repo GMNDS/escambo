@@ -6,6 +6,7 @@ import type {
 	UserData,
 	UpdateUserData,
 } from "./types/userTypes";
+import bcrypt from "bcrypt";
 
 export class UserModel {
 	public id?: string;
@@ -26,11 +27,13 @@ export class UserModel {
 
 	async create(): Promise<UserData> {
 		try {
+			// Gera hash da senha antes de salvar
+			const hashedPassword = await bcrypt.hash(this.password, 10);
 			const [result] = await db
 				.insert(users)
 				.values({
 					username: this.username,
-					password: this.password,
+					password: hashedPassword,
 				})
 				.returning();
 
@@ -77,11 +80,15 @@ export class UserModel {
 			if (!this.id) {
 				throw new Error("User ID is required for update");
 			}
+			let newPassword = this.password;
+			if (data.password && data.password !== this.password) {
+				newPassword = await bcrypt.hash(data.password, 10);
+			}
 			const [result] = await db
 				.update(users)
 				.set({
 					username: data.username,
-					password: data.password,
+					password: newPassword,
 				})
 				.where(eq(users.id, this.id))
 				.returning();
@@ -104,6 +111,23 @@ export class UserModel {
 		} catch (error) {
 			console.error("Error deleting user:", error);
 			throw new Error("Failed to delete user");
+		}
+	}
+
+	static async findByUsername(username: string): Promise<UserData | null> {
+		try {
+			const [result] = await db
+				.select()
+				.from(users)
+				.where(eq(users.username, username))
+				.limit(1);
+			if (!result) {
+				return null;
+			}
+			return result as UserData;
+		} catch (error) {
+			console.error("Error finding user by username:", error);
+			throw new Error("Failed to find user by username");
 		}
 	}
 }
